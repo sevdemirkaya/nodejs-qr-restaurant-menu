@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">   
+<title>Menu</title>
+<style>
+.table-btn{
+  width:100%;
+  background:linear-gradient(135deg,#d4af37,#e6c158);
+  border:none;
+  padding:14px;
+  border-radius:10px;
+  font-weight:600;
+  letter-spacing:1px;
+  cursor:pointer;
+  transition:0.3s;
+}
+.menu-img{
+    width:70px;
+    height:70px;
+    object-fit:cover;
+    border-radius:10px;
+}
+.table-btn:hover{
+  transform:translateY(-3px);
+  box-shadow:0 10px 25px rgba(212,175,55,0.4);
+}
+body{
+    margin:0;
+    padding:40px;
+    min-height:100vh;
+    background:white;
+    position:relative;
+}
+.search-box{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+}
+
+#searchInput{
+    width:280px;
+}
+#tableScreen{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.75);
+  backdrop-filter:blur(8px);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn{
+  from{ opacity:0 }
+  to{ opacity:1 }
+}
+.table-box{
+  background:linear-gradient(
+    145deg,
+    rgba(30,30,30,0.95),
+    rgba(20,20,20,0.95)
+  );
+  padding:50px 40px;
+  border-radius:18px;
+  text-align:center;
+  width:340px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.6);
+  border:1px solid rgba(212,175,55,0.15);
+  transform:scale(0.95);
+  animation: popUp 0.4s ease forwards;
+}
+
+@keyframes popUp{
+  to{ transform:scale(1); }
+}
+
+.table-box h2{
+  color:#d4af37;
+  margin-bottom:20px;
+}
+
+.table-box input{
+  width:100%;
+  padding:14px;
+  margin-bottom:25px;
+  border-radius:10px;
+  border:1px solid rgba(212,175,55,0.3);
+  background:#111;
+  color:white;
+  font-size:15px;
+  outline:none;
+  transition:0.3s;
+}
+
+.table-box input:focus{
+  border-color:#d4af37;
+  box-shadow:0 0 0 2px rgba(212,175,55,0.2);
+}
+
+#searchBtn{
+    background:#d4af37;
+    color:black;
+    border:none;
+    padding:10px 20px;
+    border-radius:25px;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+#searchBtn:hover{
+    box-shadow:0 5px 20px rgba(212,175,55,0.4);
+    transform:scale(1.05);
+}
+
+#categoryPage{
+    max-width:900px;
+    margin:0 auto;
+    padding-bottom:120px;
+}
+
+.category-banner{
+    height:140px;
+    border-radius:20px;
+    margin-bottom:25px;
+    display:flex;
+    align-items:center;
+    padding-left:40px;
+    font-size:26px;
+    font-weight:600;
+    color:white;
+    cursor:pointer;
+    position:relative;
+    overflow:hidden;
+    background-size:cover;
+    background-position:center;
+    transition:0.3s;
+}
+
+.category-banner::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,0.55);
+}
+
+.category-banner span{
+    position:relative;
+    z-index:2;
+}
+
+.category-banner:hover{
+    transform:scale(1.02);
+}
+#toast{
+    position:fixed;
+    bottom:120px;
+    left:50%;
+    transform:translateX(-50%);
+    background:#d4af37;
+    color:black;
+    padding:12px 24px;
+    border-radius:30px;
+    opacity:0;
+    transition:0.3s;
+}
+#totalPrice.bump{
+    animation: bump 0.3s ease;
+}
+
+@keyframes bump{
+    0%{ transform:scale(1); }
+    50%{ transform:scale(1.15); }
+    100%{ transform:scale(1); }
+}
+#toast.show{
+    opacity:1;
+}
+/* Koyu overlay */
+.overlay{
+    background: rgba(0,0,0,0.45);
+}
+
+/* başlık */
+h1{
+    font-family:'Playfair Display', serif;
+    font-size:64px;
+    font-weight:700;
+    text-align:center;
+    letter-spacing:4px;
+    margin-bottom:50px;
+
+    background: linear-gradient(
+        135deg,
+        #caa74a 0%,
+        #f5e6b3 25%,
+        #d4af37 50%,
+        #f5e6b3 75%,
+        #caa74a 100%
+    );
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+
+    text-shadow:
+        0 2px 8px rgba(0,0,0,0.15),
+        0 10px 40px rgba(212,175,55,0.35);
+}h1::after{
+    content:"";
+    display:block;
+    width:220px;
+    height:2px;
+    margin:25px auto 0;
+
+    background:linear-gradient(
+        to right,
+        transparent,
+        #d4af37,
+        #f5e6b3,
+        #d4af37,
+        transparent
+    );
+}h1::before{
+    content:"✦";
+    color:#d4af37;
+    margin-right:15px;
+    font-size:26px;
+}
+/* kategori başlığı */
+h2{
+    margin-top:40px;
+    border-bottom:2px solid #ddd;
+    padding-bottom:5px;
+}
+
+/* liste */
+#menuList{
+    max-width:900px;
+    margin:0 auto;
+}
+
+/* item kart */
+li{
+    background: linear-gradient(
+        135deg,
+        rgba(30,30,30,0.85),
+        rgba(20,20,20,0.75)
+    );
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(212,175,55,0.08);
+    margin:18px 0;
+    padding:22px 26px;
+    border-radius:16px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+    transition: all 0.3s ease;
+}
+
+li:hover{
+    transform: translateY(-6px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+}
+/* buton */
+button{
+    background:#2ea44f;
+    border:none;
+    color:white;
+    padding:8px 14px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+button:hover{
+    background:#248a3d;
+}
+#categoryButtons{
+    text-align:center;
+    margin-bottom:50px;
+}
+
+#categoryButtons button{
+    background: transparent;
+    color: #d4af37;
+    border: 1px solid rgba(212,175,55,0.4);
+    padding: 10px 20px;
+    border-radius: 4px;   /* yuvarlaklığı azalttık */
+    font-weight: 500;
+    letter-spacing: 1px;
+    transition: 0.3s;
+}
+
+#categoryButtons button:hover{
+    background: rgba(212,175,55,0.1);
+    border-color: #d4af37;
+}
+li span{
+    color:#f5f5f5;
+    font-weight:500;
+}
+.item-left{
+    display:flex;
+    gap:20px;
+    align-items:center;
+}
+.item-name{
+    font-size:18px;
+    letter-spacing:0.5px;
+    color:#fff;
+    font-weight:500;
+}
+
+
+.item-desc{
+    font-size:13px;
+    opacity:0.6;
+    margin-top:4px;
+}
+.item-price{
+    color:#d4af37;
+    font-weight:600;
+    font-size:15px;
+    letter-spacing:1px;
+    opacity:0.9;
+}
+li button{
+    background: linear-gradient(135deg,#d4af37,#e6c158);
+    color:black;
+    border:none;
+    padding:10px 20px;
+    border-radius:6px;
+    font-weight:600;
+    letter-spacing:0.5px;
+    transition: all 0.25s ease;
+}
+
+li button:hover{
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(212,175,55,0.4);
+}
+#orderBar{
+    position:fixed;
+    bottom:0;
+    left:0;
+    width:100%;
+    display:flex;
+    justify-content:center;
+    padding:20px 0;
+    background:rgba(0,0,0,0.85);
+    backdrop-filter:blur(10px);
+    border-top:1px solid rgba(212,175,55,0.3);
+}
+
+#sendBtn{
+    background:#d4af37;
+    color:black;
+    border:none;
+    padding:14px 40px;
+    border-radius:4px;
+    font-weight:600;
+    letter-spacing:1px;
+    font-size:16px;
+    transition:0.2s;
+}
+
+#sendBtn:hover{
+    opacity:0.85;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1> Pigro Restaurant Menü</h1>
+<div id="tableScreen">
+  <div class="table-box">
+    <div style="color:#d4af37;font-size:26px;margin-bottom:20px;font-family:'Playfair Display',serif;">
+  PIGRO
+</div>
+    <h2>Masa Numaranız</h2>
+    <input type="number" id="tableNumber" placeholder="Masa No" />
+    <button onclick="setTable()">Devam Et</button>
+  </div>
+</div>
+<div class="search-container">
+  <div class="search-box">
+      <input 
+        type="text" 
+        id="searchInput" 
+        placeholder="Ürün ara..." 
+      />
+      <button id="searchBtn">Ara</button>
+  </div>
+</div>
+<div id="categoryPage"></div>
+<div id="menuList"></div>
+
+
+<script>
+    let tableNo = null;
+
+function setTable(){
+  const value = document.getElementById("tableNumber").value;
+
+  if(!value){
+    alert("Masa numarası giriniz");
+    return;
+  }
+
+  tableNo = value;
+  document.getElementById("tableScreen").style.display = "none";
+}
+const searchInput = document.getElementById("searchInput");
+const menuItems = document.querySelectorAll(".menu-item");
+
+searchInput.addEventListener("keyup", function () {
+  const value = searchInput.value.toLowerCase();
+
+  menuItems.forEach(item => {
+    const text = item.textContent.toLowerCase();
+    item.style.display = text.includes(value) ? "flex" : "none";
+  });
+});
+
+let allData = [];
+
+fetch('/menu')
+.then(res => res.json())
+.then(data => {
+    window.scrollTo(0,0); 
+    allData = data;
+
+    const categoryPage = document.getElementById("categoryPage");
+    const menuDiv = document.getElementById("menuList");
+
+    categoryPage.innerHTML = "";
+    menuDiv.innerHTML = "";
+
+    data.forEach((cat,index) => {
+
+        const banner = document.createElement("div");
+        banner.className = "category-banner";
+
+        const images = [
+            "/images/banner-hotdrinks.jpeg",
+            "/images/banner-colddrinks.jpeg",
+            "/images/lemoncheesecake.jpeg",
+            "/images/danajambon.jpeg",
+            "/images/danaantrikot.jpeg",
+            "/images/californiaroll.jpeg",
+            "/images/tavukburger.jpeg",
+            "/images/sezarsalata.jpeg",
+            "/images/citirtavuk.jpeg",
+            "/images/mozarella.jpeg",
+            "/images/combobox.jpeg",
+            "/images/serpmekahvalti.jpeg",
+
+        ];
+
+        banner.style.backgroundImage = `url('${images[index] || "/coffee.jpeg"}')`;
+
+        banner.innerHTML = `<span>${cat.category}</span>`;
+        banner.onclick = () => showCategory(cat);
+
+        categoryPage.appendChild(banner);
+    });
+
+});  
+
+ function showCategory(category){
+
+    const categoryPage = document.getElementById("categoryPage");
+    const menuDiv = document.getElementById("menuList");
+
+    categoryPage.style.display = "none";
+    menuDiv.innerHTML = "";
+
+    const backBtn = document.createElement("button");
+    backBtn.innerText = "← Geri";
+    backBtn.style.marginBottom = "20px";
+
+    backBtn.onclick = () => {
+        menuDiv.innerHTML = "";
+        categoryPage.style.display = "block";
+    };
+
+    menuDiv.appendChild(backBtn);
+
+    category.items.forEach(item => {
+
+        const li = document.createElement("li");
+
+        const btn = document.createElement("button");
+        li.className = "menu-item"; 
+        btn.textContent = "Sepete Ekle";
+        btn.onclick = () => addToCart(item.name, item.price);
+
+        li.innerHTML = `
+            <div class="item-left">
+                <img src="${item.image}" 
+                     class="menu-img"
+                     onerror="this.src='/coffee.jpeg'">
+                <div>
+                    <div class="item-name">${item.name}</div>
+                    <div class="item-price">${item.price} TL</div>
+                </div>
+            </div>
+        `;
+
+        li.appendChild(btn);
+        menuDiv.appendChild(li);
+    });
+}
+searchInput.addEventListener("keyup", function () {
+    const value = searchInput.value.toLowerCase();
+
+    const items = document.querySelectorAll(".menu-item");
+
+    items.forEach(item => {
+        const name = item.querySelector(".item-name")
+                         .textContent
+                         .toLowerCase();
+
+        item.style.display = name.includes(value) ? "flex" : "none";
+    });
+});
+function updateTotal(){
+    const el = document.getElementById("totalPrice");
+    el.classList.add("bump");
+    setTimeout(()=> el.classList.remove("bump"), 300);
+    const total = cart.reduce((sum,item)=> sum + item.price,0);
+    document.getElementById("totalPrice").innerText =
+        "Toplam: ₺" + total;
+}
+function showToast(message){
+    const toast = document.getElementById("toast");
+    toast.innerText = message;
+    toast.classList.add("show");
+
+    setTimeout(()=>{
+        toast.classList.remove("show");
+    },2000);
+
+}
+
+</script>
+<script>
+let cart = [];
+
+function addToCart(name, price) {
+    cart.push({ name, price });
+
+    updateTotal();
+    showToast(name + " sepete eklendi");
+}
+function sendOrder() {
+
+    if(cart.length === 0){
+       showToast("Sepet boş!");
+        return;
+    }
+
+    fetch('/order', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        table: tableNo,
+        items: cart
+    })
+})
+    .then(res => res.json())
+    .then(data => {
+       showToast("Sipariş mutfağa gönderildi!");
+        cart = [];
+        updateTotal();
+        
+    });
+}
+</script>
+<div id="orderBar">
+     <span id="totalPrice">Toplam: ₺0</span>
+    <button id="sendBtn" onclick="sendOrder()">Siparişi Gönder</button>
+</div>
+<div class="overlay"></div>
+<div id="toast"></div>
+</body>
+</html>
