@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<title>Siparişlerim</title>
+
+<style>
+
+body{
+    font-family: 'Inter', sans-serif;
+    background:white;
+    padding:40px;
+}
+
+h1{
+    font-family:'Playfair Display', serif;
+    font-size:48px;
+    text-align:center;
+    margin-bottom:40px;
+    background:linear-gradient(135deg,#caa74a,#f5e6b3,#d4af37);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+.orders{
+    max-width:800px;
+    margin:0 auto;
+}
+
+.order-card{
+
+    background:linear-gradient(
+        135deg,
+        rgba(30,30,30,0.9),
+        rgba(20,20,20,0.8)
+    );
+
+    padding:25px;
+    border-radius:16px;
+    margin-bottom:20px;
+
+    border:1px solid rgba(212,175,55,0.15);
+
+    color:white;
+}
+
+.order-header{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:15px;
+}
+
+.status{
+    color:#d4af37;
+    font-weight:600;
+}
+
+ul{
+    margin-top:10px;
+}
+
+li{
+    margin:5px 0;
+}
+
+.back-btn{
+
+    display:block;
+    width:120px;
+    margin:0 auto 40px;
+
+    background:#d4af37;
+    color:black;
+
+    padding:10px 20px;
+    border-radius:20px;
+
+    border:none;
+    cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<button class="back-btn" onclick="history.back()">← Menü</button>
+
+<h1>Siparişlerim</h1>
+
+<div class="orders" id="orders"></div>
+
+<script>
+
+const params = new URLSearchParams(window.location.search);
+const table = Number(params.get("table"));
+
+fetch("/orders")
+.then(res=>res.json())
+.then(data=>{
+    console.log(data)
+
+    const myOrders = data.filter(o => o.table == table);
+
+    const container = document.getElementById("orders");
+
+    myOrders.forEach(order=>{
+
+        const card = document.createElement("div");
+        card.className="order-card";
+
+        card.innerHTML = `
+
+<div class="order-header">
+    <div>Masa ${order.table}</div>
+    <div class="status" style="color:${order.paid ? '#7CFC00' : '#d4af37'}">
+    ${order.status}
+    </div>
+</div>
+
+<ul>
+${order.items.map(i=>`<li>${i.name} - ₺${i.price}</li>`).join("")}
+</ul>
+
+<div style="margin-top:10px;opacity:0.8">
+Ödeme: ${order.payment}
+</div>
+
+<div style="margin-top:5px;font-weight:600;color:#d4af37">
+Toplam: ₺${order.total}
+</div>
+
+<div style="margin-top:15px">
+
+${order.paid ? `
+<div style="margin-top:15px;color:#7CFC00;font-weight:600">
+✔ Ödeme tamamlandı
+</div>
+` : `
+<button onclick="payOnline(${order.id})"
+style="
+background:#d4af37;
+border:none;
+padding:8px 16px;
+border-radius:6px;
+cursor:pointer;">
+💳 Online Öde
+</button>
+`}
+
+</div>
+<button onclick="deleteOrder(${order.id})"
+style="
+margin-top:10px;
+background:#ff4d4d;
+border:none;
+padding:8px 16px;
+border-radius:6px;
+cursor:pointer;">
+❌ Siparişi Kapat
+</button>
+
+`;
+
+        container.appendChild(card);
+
+    });
+
+});
+
+
+function payCash(id){
+
+fetch("/pay/"+id,{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+payment:"cash",
+paid:true
+})
+})
+.then(()=>location.reload())
+
+}
+function deleteOrder(index){
+fetch("/delete/"+index,{
+method:"DELETE"
+})
+.then(()=>location.reload())
+}
+function payOnline(id){
+
+window.location.href = "/payment.html?order=" + id
+
+setInterval(()=>{
+location.reload()
+},5000)
+}
+
+</script>
+
+</body>
+</html>

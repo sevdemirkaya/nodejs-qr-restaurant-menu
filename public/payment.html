@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Ödeme</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+ *{
+box-sizing:border-box;
+margin:0;
+padding:0;
+}
+.topbar{
+width:80%;
+max-width:800px;
+margin:0 auto;
+
+display:flex;
+justify-content:flex-start;
+
+padding:20px;
+}
+
+.back-btn{
+background:transparent;
+border:1px solid #d4af37;
+color:#d4af37;
+padding:8px 18px;
+border-radius:20px;
+cursor:pointer;
+font-size:14px;
+transition:0.2s;
+}
+
+.back-btn:hover{
+background:#d4af37;
+color:rgb(255, 255, 255);
+}
+body{
+font-family:'Inter',sans-serif;
+background:#f5f5f5;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+height:100vh;
+color:#222;
+}
+
+h1{
+font-family:'Playfair Display',serif;
+font-size:48px;
+margin-bottom:40px;
+
+background:linear-gradient(135deg,#caa74a,#f5e6b3,#d4af37);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+
+.card{
+background:#ffffff;
+padding:40px;
+border-radius:14px;
+width:320px;
+box-shadow:0 20px 60px rgba(0,0,0,0.6);
+}
+
+.card h2{
+margin-bottom:20px;
+}
+
+input{
+width:100%;
+padding:12px;
+margin:8px 0;
+border:1px solid #ddd;
+border-radius:6px;
+background:white;
+color:#222;
+}
+
+button{
+width:100%;
+padding:12px;
+margin-top:15px;
+background:#d4af37;
+border:none;
+border-radius:6px;
+font-weight:600;
+cursor:pointer;
+}
+
+button:hover{
+opacity:0.9;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="topbar">
+<button class="back-btn" onclick="goBack()">← Siparişime Dön</button>
+</div>
+
+<h1>Pigro Restaurant</h1>
+
+</div>
+<div class="card">
+
+<h2>🔒 Güvenli Kart ile Ödeme</h2>
+<p style="font-size:12px;color:#888;margin-bottom:10px">
+🔒 256-bit SSL ile güvenli ödeme
+</p>
+
+<input 
+placeholder="1234 5678 9012 3456"
+maxlength="16"
+inputmode="numeric">
+<input 
+placeholder="MM/YY"
+maxlength="5"
+inputmode="numeric">
+<input 
+placeholder="CVC"
+maxlength="4"
+inputmode="numeric">
+
+<button onclick="pay()">Ödemeyi Tamamla</button>
+
+</div>
+
+<script>
+function goBack(){
+history.back()
+}
+const params = new URLSearchParams(window.location.search)
+const orderId = params.get("order")
+
+
+function pay(){
+
+fetch("/pay/"+orderId,{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+payment:"online",
+paid:true
+})
+})
+.then(()=>{
+alert("Ödeme başarılı 🎉")
+window.location.href="/orders.html"
+})
+
+}
+
+</script>
+
+</body>
+
+</html>

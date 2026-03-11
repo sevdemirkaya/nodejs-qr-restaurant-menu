@@ -151,9 +151,41 @@ app.get('/menu', (req, res) => {
         { id: 77, name: "Simit Tabağı", price: 400, image:"/images/simittabagi.jpeg" },
         { id: 78, name: "Menemen", price: 200, image:"/images/Menemen.jpeg" },
         { id: 79, name: "Sucuklu Yumurta", price: 200, image:"/images/sucukluyumurta.jpeg" },
-        { id: 80, name: "Peynir Tabağı", price: 300, image:"/images/peynirtabagi.jpeg" }            
-        
-
+        { id: 80, name: "Peynir Tabağı", price: 300, image:"/images/peynirtabagi.jpeg" },
+        { id: 81, name: "Kuymak", price: 300, image:"/images/kuymak.jpeg" },
+        { id: 82, name: "Sucuklu Tost", price: 300, image:"/images/tost.jpeg" },
+        {id: 83, name: "Kasarli Tostu", price: 300, image:"/images/kasarlitost.jpeg" },
+        {id: 84, name: "Kuru Hasan", price: 250, image:"/images/kuruhasan.jpeg" }
+]
+},
+{
+    category: "Kokteyller",
+    items: [
+        { id: 85, name: "Margarita Pizza", price: 600, image:"/images/margarita.jpeg" },
+        { id: 86, name: "Mojito", price: 600, image:"/images/mojito.jpeg" },
+        { id: 87, name: "Piña Colada", price: 600, image:"/images/pina.jpeg" },
+        { id: 88, name: "Cosmopolitan", price: 600, image:"/images/cosmopolitan.jpeg" },
+        { id: 89, name: "Tequila", price: 600, image:"/images/tequila.jpeg" }
+    ]
+},
+{
+    category: "Vegan",
+    items: [
+        { id: 90, name: "Vegan Burger", price: 450, image:"/images/veganb.jpeg" },
+        { id: 91, name: "Vegan Pizza", price: 400, image:"/images/veganpizza.jpeg" },
+        { id: 92, name: "Vegan Salata", price: 350, image:"/images/vegans.jpeg" },
+        { id: 93, name: "Vegan Tatlı", price: 300, image:"/images/vegantatli.jpeg" },
+        { id: 94, name: "Vegan Smoothie", price: 250, image:"/images/vegansmothie.jpeg" }
+     ]
+},
+{
+    category: "Kampanyalar",
+    items: [
+        { id: 95, name: "Kampanya Tatlı", price: 100, image:"/images/kampanya1.jpeg" },
+        { id: 96, name: "Kampanya Burger", price: 200, image:"/images/kampanya2.jpeg" },
+        { id: 97, name:" Kampanya Burger 2", price: 300, image:"/images/kampanya3.jpeg" },
+        { id: 98, name: "Latte ve Tatlı", price: 400, image:"/images/kampanya4.jpeg" },
+        { id: 99, name: "2 kahve ve tatlı", price: 500, image:"/images/tatlive2kahve.jpeg" }
     ]
 }
     
@@ -165,16 +197,19 @@ app.post('/order', (req,res)=>{
     console.log("POST GELDI 🔥");
     console.log("Gelen veri:", req.body);
 
-    const order = req.body;
-    order.time = Date.now();
+    const order = {
+        ...req.body,
+        id: Date.now(),
+        time: Date.now(),
+        status: "waiting"
+    };
 
     orders.push(order);
 
     console.log("Guncel orders:", orders);
 
-    res.json({status:"ok"});
+    res.json(order);
 });
-
 
 /* ---------------- ORDER GET ---------------- */
 app.get('/orders', (req,res)=>{
@@ -185,13 +220,34 @@ app.get('/orders', (req,res)=>{
 app.get('/', (req, res) => {
     res.send('Server calisiyor 🚀');
 });
-app.delete('/delete/:index', (req,res)=>{
-    const index = req.params.index;
-    orders.splice(index,1);
-    res.json({status:"deleted"});
-});
+app.delete("/delete/:id",(req,res)=>{
+
+const id = Number(req.params.id)
+
+orders = orders.filter(o => o.id !== id)
+
+console.log("Sipariş silindi:", id)
+
+res.json({status:"deleted"})
+
+})
 
 /* ---------------- LISTEN (EN SON) ---------------- */
 app.listen(3000, () => {
     console.log('Server 3000 portunda calisiyor');
 });
+app.post("/pay/:id",(req,res)=>{
+
+const id = Number(req.params.id)
+
+const order = orders.find(o => o.id == id)
+
+if(order){
+    order.payment = req.body.payment
+    order.paid = true
+    order.status = "paid"
+}
+
+res.json({status:"ok"})
+
+})

@@ -15,6 +15,7 @@
   cursor:pointer;
   transition:0.3s;
 }
+
 .menu-img{
     width:70px;
     height:70px;
@@ -379,6 +380,19 @@ li button:hover{
 <body>
 
 <h1> Pigro Restaurant Menü</h1>
+<div style="text-align:center; margin-bottom:20px;">
+    <button onclick="goOrders()" 
+        style="
+        background:#d4af37;
+        color:black;
+        border:none;
+        padding:10px 25px;
+        border-radius:20px;
+        font-weight:600;
+        cursor:pointer;">
+        Siparişlerim
+    </button>
+</div>
 <div id="tableScreen">
   <div class="table-box">
     <div style="color:#d4af37;font-size:26px;margin-bottom:20px;font-family:'Playfair Display',serif;">
@@ -416,6 +430,9 @@ function setTable(){
 
   tableNo = value;
   document.getElementById("tableScreen").style.display = "none";
+}
+function goOrders(){
+    window.location.href = "/orders.html?table=" + tableNo;
 }
 const searchInput = document.getElementById("searchInput");
 const menuItems = document.querySelectorAll(".menu-item");
@@ -461,6 +478,9 @@ fetch('/menu')
             "/images/mozarella.jpeg",
             "/images/combobox.jpeg",
             "/images/serpmekahvalti.jpeg",
+            "/images/pina.jpeg",
+            "/images/vegans.jpeg",
+            "/images/kampanya1.jpeg"
 
         ];
 
@@ -563,27 +583,33 @@ function addToCart(name, price) {
 function sendOrder() {
 
     if(cart.length === 0){
-       showToast("Sepet boş!");
+        showToast("Sepet boş!");
         return;
     }
 
+    const total = cart.reduce((sum,item)=> sum + item.price,0);
+
     fetch('/order', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-        table: tableNo,
-        items: cart
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            table: tableNo,
+            items: cart,
+            total: total,
+            payment: "cash " // veya card
+        })
     })
-})
     .then(res => res.json())
     .then(data => {
-       showToast("Sipariş mutfağa gönderildi!");
+
+        showToast("Sipariş mutfağa gönderildi!");
         cart = [];
         updateTotal();
-        
+
     });
+
 }
 </script>
 <div id="orderBar">
