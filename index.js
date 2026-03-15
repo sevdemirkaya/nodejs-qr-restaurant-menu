@@ -187,6 +187,15 @@ app.get('/menu', (req, res) => {
         { id: 98, name: "Latte ve Tatlı", price: 400, image:"/images/kampanya4.jpeg" },
         { id: 99, name: "2 kahve ve tatlı", price: 500, image:"/images/tatlive2kahve.jpeg" }
     ]
+},
+{    category: "Bowl",
+    items: [
+        { id: 100, name: "Acai Bowl", price: 250, image:"/images/acaibowl.jpeg" },
+        { id: 101, name: "Mango Bowl", price: 250, image:"/images/mangobowl.jpeg" },
+        { id: 102, name: "Çilekli Bowl", price: 250, image:"/images/strawberrybowl.jpeg" },
+        { id: 103, name: "Kahveli Bowl", price: 250, image:"/images/coffeebowl.jpeg" },
+        { id: 104, name: "Fıstık Ezmeli Bowl", price: 250, image:"/images/peanutbowl.jpeg" }
+     ]
 }
     
 ]);
@@ -251,3 +260,32 @@ if(order){
 res.json({status:"ok"})
 
 })
+app.post("/status/:id",(req,res)=>{
+
+const id = Number(req.params.id)
+
+const order = orders.find(o => o.id === id)
+
+if(order){
+    order.status = req.body.status
+}
+
+res.json({status:"updated"})
+
+})
+app.post('/order', (req,res)=>{
+
+const order = {
+    id: Date.now(),
+    table: req.body.table,   // QR'den gelen masa
+    items: req.body.items,
+    total: req.body.total,
+    status: "waiting",
+    time: Date.now()
+};
+
+orders.push(order);
+
+res.json(order);
+
+});

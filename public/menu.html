@@ -380,6 +380,7 @@ li button:hover{
 <body>
 
 <h1> Pigro Restaurant Menü</h1>
+<h3 id="tableLabel" style="text-align:center;color:#d4af37;"></h3>
 <div style="text-align:center; margin-bottom:20px;">
     <button onclick="goOrders()" 
         style="
@@ -392,16 +393,6 @@ li button:hover{
         cursor:pointer;">
         Siparişlerim
     </button>
-</div>
-<div id="tableScreen">
-  <div class="table-box">
-    <div style="color:#d4af37;font-size:26px;margin-bottom:20px;font-family:'Playfair Display',serif;">
-  PIGRO
-</div>
-    <h2>Masa Numaranız</h2>
-    <input type="number" id="tableNumber" placeholder="Masa No" />
-    <button onclick="setTable()">Devam Et</button>
-  </div>
 </div>
 <div class="search-container">
   <div class="search-box">
@@ -418,19 +409,9 @@ li button:hover{
 
 
 <script>
-    let tableNo = null;
 
-function setTable(){
-  const value = document.getElementById("tableNumber").value;
 
-  if(!value){
-    alert("Masa numarası giriniz");
-    return;
-  }
 
-  tableNo = value;
-  document.getElementById("tableScreen").style.display = "none";
-}
 function goOrders(){
     window.location.href = "/orders.html?table=" + tableNo;
 }
@@ -480,7 +461,9 @@ fetch('/menu')
             "/images/serpmekahvalti.jpeg",
             "/images/pina.jpeg",
             "/images/vegans.jpeg",
-            "/images/kampanya1.jpeg"
+            "/images/kampanya1.jpeg",
+            "/images/bowl.jpeg",
+
 
         ];
 
@@ -572,6 +555,14 @@ function showToast(message){
 
 </script>
 <script>
+let tableNo = null;
+
+const params = new URLSearchParams(window.location.search);
+tableNo = params.get("table");
+document.getElementById("tableLabel").innerText = "Masa " + tableNo;
+if(!tableNo){
+    alert("QR kod okunamadı. Lütfen masadaki QR kodu kullanın.");
+}
 let cart = [];
 
 function addToCart(name, price) {
